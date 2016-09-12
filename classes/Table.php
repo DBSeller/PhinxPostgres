@@ -7,73 +7,73 @@ use Phinx\Db\Adapter\AdapterInterface;
 class Table extends \Phinx\Db\Table
 {
 
-	/**
-	 * @var string
-	 */
-	private $tableSchema;
+    /**
+     * @var string
+     */
+    private $tableSchema;
 
-	/**
-   * {@inheritdoc}
-   */
-	public function __construct($name, $options = array(), AdapterInterface $adapter = null)
-	{
-		$schema = 'public';
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($name, $options = array(), AdapterInterface $adapter = null)
+    {
+        $schema = 'public';
 
-		if(isset($options['schema'])) {
-			$schema = $options['schema'];
-			unset($options['schema']);
-		}
-		
-		$this->setTableSchema($schema);
-		$this->setTableSchemaAdapter($adapter);
+        if(isset($options['schema'])) {
+            $schema = $options['schema'];
+            unset($options['schema']);
+        }
 
-		parent::__construct($name, $options, $adapter);
-	}
+        $this->setTableSchema($schema);
+        $this->setTableSchemaAdapter($adapter);
 
-	/**
-	 * Sets the schema of table.
-	 *
-	 * @param string $schema Schema of Table
-	 * @return Table
-	 */
-	public function setTableSchema($schema = 'public')
-	{
-		$this->tableSchema = $schema;
-		return $this;
-	}
+        parent::__construct($name, $options, $adapter);
+    }
 
-	/**
-	 * Gets the schema of table.
-	 *
-	 * @return string
-	 */
-	public function getTableSchema()
-	{
-		return $this->tableSchema;
-	}
+    /**
+     * Sets the schema of table.
+     *
+     * @param string $schema Schema of Table
+     * @return Table
+     */
+    public function setTableSchema($schema = 'public')
+    {
+        $this->tableSchema = $schema;
+        return $this;
+    }
 
-	/**
-	 * Sets the schema of table on adapter to persist on database.
-	 *
-	 * @param AdapterInterface $adapter
-	 * @return Table
-	 */
-	public function setTableSchemaAdapter(AdapterInterface $adapter)
-	{	
-		$adapterOptions           = $adapter->getOptions();
-		$adapterOptions['schema'] = $this->getTableSchema();
+    /**
+     * Gets the schema of table.
+     *
+     * @return string
+     */
+    public function getTableSchema()
+    {
+        return $this->tableSchema;
+    }
 
-  	$adapter->setOptions($adapterOptions);
+    /**
+     * Sets the schema of table on adapter to persist on database.
+     *
+     * @param AdapterInterface $adapter
+     * @return Table
+     */
+    public function setTableSchemaAdapter(AdapterInterface $adapter)
+    {
+        $adapterOptions           = $adapter->getOptions();
+        $adapterOptions['schema'] = $this->getTableSchema();
 
-    return $this;
-	}
+        $adapter->setOptions($adapterOptions);
 
-	/**
-   * {@inheritdoc}
-   */
-	public function save()
-	{
-		$this->setTableSchemaAdapter($this->getAdapter());
-		parent::save();
-	}
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save()
+    {
+        $this->setTableSchemaAdapter($this->getAdapter());
+        parent::save();
+    }
 }
