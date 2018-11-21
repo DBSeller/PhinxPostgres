@@ -4,7 +4,7 @@ namespace Classes;
 
 use Phinx\Migration\AbstractMigration;
 
-class PostgresMigration extends AbstractMigration {
+abstract class PostgresMigration extends AbstractMigration {
 
     /**
      * {@inheritdoc}
@@ -33,5 +33,53 @@ class PostgresMigration extends AbstractMigration {
         $stream = null;
 
         return $oid;
+    }
+
+    public function up()
+    {
+        if(preg_match('/PostgresCallbackMigration/m', implode("\n", class_implements($this)))) {
+            
+            $this->callbackBeforeUp();
+            
+            $this->doUp();
+            $this->execute("
+                GRANT ALL ON SCHEMA plugins TO plugin;
+                SELECT fc_grant_revoke('grant', 'plugin', 'select', '%', '%');
+            ");
+
+            $this->callbackAfterUp();
+        }
+    }
+    
+    public function down()
+    {
+        if(preg_match('/PostgresCallbackMigration/m', implode("\n", class_implements($this)))) {
+            
+            $this->callbackBeforeDown();
+
+            $this->doDown();
+
+            $this->callbackAfterDown();
+        }
+    }
+
+    protected function callbackBeforeUp()
+    {
+        return;
+    }
+
+    protected function callbackAfterUp()
+    {
+        return;
+    }
+
+    protected function callbackBeforeDown()
+    {
+        return;
+    }
+
+    protected function callbackAfterDown()
+    {
+        return;
     }
 }
